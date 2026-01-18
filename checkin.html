@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เช็คชื่อเข้าเรียน</title>
+    <title>เช็คชื่อเข้าเรียนด้วยตัวเอง</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -11,7 +13,7 @@
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
 
-    <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+    <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full border-t-4 border-[#C5A66B]">
         <div class="text-center mb-6">
             <h1 class="text-2xl font-bold text-gray-800">เช็คชื่อเข้าเรียน 📝</h1>
             <p class="text-gray-500 text-sm mt-1">หลักสูตรชั้นเตรียมเพื่อการรับใช้</p>
@@ -20,15 +22,19 @@
         <form id="checkinForm" class="space-y-5">
             
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">เลือกชื่อของคุณ</label>
-                <select id="studentName" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C5A66B] outline-none bg-gray-50">
+                <label class="block text-sm font-medium text-gray-700 mb-2">1. เลือกชื่อของคุณ</label>
+                <select id="studentName" required onchange="showStudentInfo()" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C5A66B] outline-none bg-gray-50">
                     <option value="">-- กำลังโหลดรายชื่อ... --</option>
                 </select>
-                <p class="text-xs text-red-500 mt-1 hidden" id="nameError">* ไม่พบชื่อ? กรุณาสมัครเรียนก่อนครับ</p>
+                
+                <div id="studentInfoBox" class="hidden mt-3 p-3 bg-blue-50 rounded-md border border-blue-100 text-sm text-blue-800">
+                    <p class="font-bold mb-1">📌 วิชาที่คุณลงทะเบียนไว้:</p>
+                    <p id="registeredSubjects" class="text-gray-600">-</p>
+                </div>
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">เช็คชื่อครั้งที่</label>
+                <label class="block text-sm font-medium text-gray-700 mb-2">2. เช็คชื่อครั้งที่</label>
                 <select id="weekNumber" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C5A66B] outline-none bg-gray-50">
                     <option value="1">ครั้งที่ 1</option>
                     <option value="2">ครั้งที่ 2</option>
@@ -41,6 +47,7 @@
                     <option value="9">ครั้งที่ 9</option>
                     <option value="10">ครั้งที่ 10</option>
                 </select>
+                <p class="text-xs text-gray-400 mt-1">* เลือกครั้งที่เรียนให้ตรงกับสัปดาห์ปัจจุบัน</p>
             </div>
 
             <button type="submit" id="submitBtn" class="w-full bg-[#C5A66B] hover:bg-[#A68A55] text-white font-bold py-3 rounded-lg transition shadow-md">
@@ -55,25 +62,26 @@
 
     <script>
         // ******************************************************
-        // 🔴 ใส่ URL เดิมของคุณตรงนี้ (อันเดียวกับหน้าสมัคร) 🔴
-        const WEB_APP_URL = "วาง_URL_เดิมของคุณ_ตรงนี้"; 
+        // 🔴 แก้ URL ตรงนี้เป็นอันเดียวกับหน้าสมัครเรียนนะครับ 🔴
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx2PV3P8zDm3-9RsdkY56HMlDmpGprQZ53EBCqHchskUzALNd7QqU1n51XFFOQvER1j/exec"; 
         // ******************************************************
 
-        // 1. ดึงรายชื่อนักเรียนมาใส่ใน Dropdown ทันทีที่เปิดเว็บ
+        let allStudentsData = []; // ตัวแปรเก็บข้อมูลนักเรียนทั้งหมด
+
+        // 1. ดึงรายชื่อนักเรียน
         fetch(WEB_APP_URL)
         .then(res => res.json())
         .then(data => {
             const select = document.getElementById('studentName');
             select.innerHTML = '<option value="">-- เลือกชื่อของคุณ --</option>';
             
-            if (data.length === 0) {
-                document.getElementById('nameError').classList.remove('hidden');
-                return;
-            }
+            if (data.length === 0) return;
 
-            // data[0] คือ ชื่อ, data[1] คือ วิชา (ตามลำดับใน Google Sheet)
+            // เก็บข้อมูลไว้ใช้ตอนเลือกชื่อ
+            allStudentsData = data; 
+
             data.forEach(row => {
-                const name = row[0]; // คอลัมน์แรกคือชื่อ
+                const name = row[0]; // คอลัมน์ 0 = ชื่อ
                 const option = document.createElement('option');
                 option.value = name;
                 option.text = name;
@@ -84,6 +92,26 @@
             console.error(err);
             document.getElementById('studentName').innerHTML = '<option value="">โหลดข้อมูลไม่สำเร็จ</option>';
         });
+
+        // 🆕 ฟังก์ชันโชว์ข้อมูลเมื่อเลือกชื่อ
+        function showStudentInfo() {
+            const selectedName = document.getElementById('studentName').value;
+            const infoBox = document.getElementById('studentInfoBox');
+            const subjectText = document.getElementById('registeredSubjects');
+
+            if (!selectedName) {
+                infoBox.classList.add('hidden');
+                return;
+            }
+
+            // ค้นหาข้อมูลของคนที่เลือก
+            const student = allStudentsData.find(row => row[0] === selectedName);
+            if (student) {
+                const subjects = student[1]; // คอลัมน์ 1 = วิชาที่ลง
+                subjectText.textContent = subjects || "ไม่พบข้อมูลวิชา";
+                infoBox.classList.remove('hidden');
+            }
+        }
 
         // 2. เมื่อกดปุ่มเช็คชื่อ
         document.getElementById('checkinForm').addEventListener('submit', function(e) {
@@ -102,12 +130,12 @@
             btn.innerHTML = 'กำลังบันทึก...';
             btn.classList.add('opacity-50');
 
-            // ส่งข้อมูลไปบันทึก (ใช้ action: "check" เหมือนเดิม)
+            // ใช้ text/plain แก้ CORS
             const payload = {
                 action: "check",
                 name: name,
                 week: week,
-                check: true // ส่งค่า true ไปเพื่อบอกว่า "มาเรียน"
+                check: true
             };
 
             fetch(WEB_APP_URL, {
@@ -122,7 +150,7 @@
                     Swal.fire({
                         icon: 'success',
                         title: 'เช็คชื่อสำเร็จ!',
-                        text: `คุณ ${name} เช็คชื่อครั้งที่ ${week} เรียบร้อย`,
+                        text: `บันทึกการเรียนครั้งที่ ${week} เรียบร้อย`,
                         timer: 2000,
                         showConfirmButton: false
                     });
