@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบเช็คชื่อนักเรียนพระคัมภีร์</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style> 
+        body { font-family: 'Sarabun', sans-serif; } 
+        /* สร้าง Checkbox ให้ใหญ่ขึ้นกดง่าย */
+        .big-checkbox { width: 1.25rem; height: 1.25rem; cursor: pointer; }
+        .saving { opacity: 0.5; pointer-events: none; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto bg-white p-6 shadow-lg rounded-lg">
+        <div class="flex justify-between items-center mb-6 flex-wrap gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800">ตารางเช็คชื่อผู้เรียนพระคัมภีร์</h1>
+                <p class="text-sm text-gray-500">ติ๊กที่ช่องเพื่อบันทึกการเข้าเรียน (ระบบบันทึกอัตโนมัติ)</p>
+            </div>
+            <button onclick="window.location.reload()" class="bg-[#C5A66B] text-white px-4 py-2 rounded hover:bg-[#A68A55] transition shadow-sm">
+                🔄 รีเฟรชข้อมูลล่าสุด
+            </button>
+        </div>
+
+        <div class="overflow-x-auto rounded-lg border border-gray-200">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky left-0 bg-gray-50 z-10 w-64">ชื่อ-นามสกุล</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-48">วิชาที่ลง</th>
+                        <script>
+                            for(let i=1; i<=10; i++) {
+                                document.write(`<th class="px-2 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[50px]">${i}</th>`);
+                            }
+                        </script>
+                    </tr>
+                </thead>
+                <tbody id="studentTable" class="bg-white divide-y divide-gray-200">
+                    <tr><td colspan="12" class="text-center p-8 text-gray-500">กำลังโหลดข้อมูล...</td></tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div id="statusToast" class="fixed bottom-4 right-4 bg-gray-800 text-white px-4 py-2 rounded shadow-lg hidden transition-opacity duration-300">
+            กำลังบันทึก...
+        </div>
+    </div>
+
+    <script>
+        const WEB_APP_URL = "YOUR_WEB_APP_URL"; // **ใส่ URL เดิมของคุณที่นี่**
+
+        // ฟังก์ชันโหลดข้อมูลนักเรียน
+        async function loadStudents() {
+            try {
+                const res = await fetch(WEB_APP_URL);
+                const data = await res.json();
+                const tbody = document.getElementById('studentTable');
+                tbody.innerHTML = '';
+
+                if (data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="12" class="text-center p-4">ยังไม่มีข้อมูลผู้สมัคร</td></tr>';
+                    return;
+                }
+                
+                data.forEach((row) => {
+                    const name = row[0];
+                    const subjects = row[1];
+                    let checkBoxes = '';
+
+                    // row[2] ถึง row[11] คือสถานะการมาเรียน ครั้งที่ 1-10
+                    for(let i=1; i<=10; i++) {
+                        // เช็คว่าใน Google Sheet มีเครื่องหมาย / หรือไม่
+                        // ข้อมูลใน array เริ่มที่ index 2 (เพราะ 0=ชื่อ, 1=วิชา)
+                        const isChecked = (row[i+1] && row[i+1].toString().trim() !== "") ? "checked" : "";
+                        
+                        checkBoxes += `
+                            <td class="px-2 py-3 text-center whitespace-nowrap">
+                                <input type="checkbox" 
+                                    class="big-checkbox text-[#C5A66B] focus:ring-[#C5A66B] rounded transition duration-150 ease-in-out" 
+                                    ${isChecked}
+                                    onchange="updateAttendance('${name}', ${i}, this)">
+                            </td>`;
+                    }
+
+                    const tr = `
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 sticky left-0 bg-white hover:bg-gray-50 z-10 border-r">${name}</td>
+                            <td class="px-6 py-4 text-xs text-gray-500 break-words max-w-xs">${subjects}</td>
+                            ${checkBoxes}
+                        </tr>
+                    `;
+                    tbody.innerHTML += tr;
+                });
+
+            } catch (error) {
+                console.error(error);
+                Swal.fire('ข้อผิดพลาด', 'ไม่สามารถโหลดข้อมูลได้', 'error');
+            }
+        }
+
+        // ฟังก์ชันอัปเดตการเช็คชื่อ
+        function updateAttendance(name, week, checkbox) {
+            const toast = document.getElementById('statusToast');
+            toast.textContent = `กำลังบันทึก ${name} ครั้งที่ ${week}...`;
+            toast.classList.remove('hidden');
+            toast.classList.remove('bg-green-600', 'bg-red-600');
+            toast.classList.add('bg-gray-800');
+
+            // ล็อก checkbox ชั่วคราวกันกดย้ำ
+            checkbox.disabled = true;
+            checkbox.classList.add('saving');
+
+            const payload = {
+                action: "check",
+                name: name,
+                week: week,
+                check: checkbox.checked
+            };
+
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.result === 'success') {
+                    toast.textContent = 'บันทึกเรียบร้อย';
+                    toast.classList.remove('bg-gray-800');
+                    toast.classList.add('bg-green-600');
+                } else {
+                    throw new Error(data.message);
+                }
+            })
+            .catch(err => {
+                toast.textContent = 'บันทึกไม่สำเร็จ!';
+                toast.classList.remove('bg-gray-800');
+                toast.classList.add('bg-red-600');
+                checkbox.checked = !checkbox.checked; // คืนค่าเดิม
+                console.error(err);
+            })
+            .finally(() => {
+                checkbox.disabled = false;
+                checkbox.classList.remove('saving');
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 2000);
+            });
+        }
+
+        // โหลดข้อมูลเมื่อเข้าหน้าเว็บ
+        loadStudents();
+    </script>
+</body>
+</html>
