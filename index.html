@@ -7,130 +7,257 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <style> body { font-family: 'Sarabun', sans-serif; } </style>
+    <style>
+        body { font-family: 'Sarabun', sans-serif; }
+    </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-gray-50 min-h-screen relative">
 
-    <div class="max-w-2xl mx-auto bg-white shadow-xl rounded-lg overflow-hidden my-10">
-        <div class="bg-[#C5A66B] p-6 text-center text-white">
+    <div class="absolute top-4 right-4 z-10">
+        <a href="checkin.html" class="bg-white border border-[#C5A66B] text-[#C5A66B] px-4 py-2 rounded-lg shadow-sm hover:bg-[#C5A66B] hover:text-white transition font-bold text-sm flex items-center gap-2">
+            <span>📝</span> เช็คชื่อเข้าเรียน
+        </a>
+    </div>
+
+    <div class="max-w-2xl mx-auto bg-white shadow-xl rounded-lg overflow-hidden my-10 relative">
+        <div class="bg-[#C5A66B] p-6 text-center text-white pt-12 md:pt-6">
             <h1 class="text-2xl font-bold">สมัครเรียนหลักสูตรชั้นเตรียมเพื่อการรับใช้</h1>
             <p class="mt-2 text-sm opacity-90">ขอพระเจ้าอวยพรในการศึกษาพระวจนะ</p>
         </div>
 
         <div class="p-8">
             <form id="regisForm" class="space-y-6">
+                
                 <div class="space-y-4">
                     <h3 class="text-lg font-semibold text-gray-700 border-b pb-2">1. ข้อมูลผู้สมัคร</h3>
-                    <div><label class="block text-sm font-medium text-gray-700">ชื่อ - นามสกุล</label><input type="text" name="name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"></div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div><label class="block text-sm font-medium text-gray-700">เพศ</label><select name="gender" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"><option>ชาย</option><option>หญิง</option></select></div>
-                        <div><label class="block text-sm font-medium text-gray-700">อายุความเชื่อ (ปี)</label><input type="text" name="faithAge" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"></div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">ชื่อ - นามสกุล</label>
+                        <input type="text" name="name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2 focus:border-[#C5A66B] focus:ring-[#C5A66B] outline-none" placeholder="ระบุชื่อและนามสกุล">
                     </div>
-                    <div><label class="block text-sm font-medium text-gray-700">คริสตจักร</label><input type="text" name="church" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"></div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">เพศ</label>
+                            <select name="gender" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                                <option>ชาย</option>
+                                <option>หญิง</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">อายุความเชื่อ (ปี)</label>
+                            <input type="text" name="faithAge" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2" placeholder="เช่น 2 ปี">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">คริสตจักร</label>
+                        <input type="text" name="church" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2" placeholder="เช่น CVC พิษณุโลก">
+                    </div>
                 </div>
 
                 <div class="space-y-4">
                     <h3 class="text-lg font-semibold text-gray-700 border-b pb-2">2. เลือกรูปแบบการเรียน</h3>
+                    
                     <div class="flex items-center space-x-6">
-                        <label class="flex items-center"><input type="radio" name="studyType" value="full" checked onclick="toggleSubjects(false)" class="text-[#C5A66B]"><span class="ml-2">เรียนทั้งหลักสูตร</span></label>
-                        <label class="flex items-center"><input type="radio" name="studyType" value="subject" onclick="toggleSubjects(true)" class="text-[#C5A66B]"><span class="ml-2">เลือกเรียนรายวิชา</span></label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="studyType" value="full" checked onclick="toggleSubjects(false)" class="text-[#C5A66B] focus:ring-[#C5A66B]">
+                            <span class="ml-2">เรียนทั้งหลักสูตร</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="studyType" value="subject" onclick="toggleSubjects(true)" class="text-[#C5A66B] focus:ring-[#C5A66B]">
+                            <span class="ml-2">เลือกเรียนรายวิชา</span>
+                        </label>
                     </div>
+
                     <div id="subjectList" class="hidden bg-gray-50 p-4 rounded-md border space-y-2">
-                        <label class="flex items-center"><input type="checkbox" name="subjects" value="รากฐานความเชื่อคริสเตียน" class="mr-2"> 1. รากฐานความเชื่อคริสเตียน</label>
-                        <label class="flex items-center"><input type="checkbox" name="subjects" value="การศึกษาพระคัมภีร์เบื้องต้น" class="mr-2"> 2. การศึกษาพระคัมภีร์เบื้องต้น</label>
-                        <label class="flex items-center"><input type="checkbox" name="subjects" value="เข้าใจการนมัสการ" class="mr-2"> 3. เข้าใจการนมัสการ</label>
-                        <label class="flex items-center"><input type="checkbox" name="subjects" value="วิถีชีวิตคริสเตียน" class="mr-2"> 4. วิถีชีวิตคริสเตียน</label>
-                        <label class="flex items-center"><input type="checkbox" name="subjects" value="เข้าใจความสัมพันธ์กับพระเจ้า" class="mr-2"> 5. เข้าใจความสัมพันธ์กับพระเจ้า</label>
-                        <label class="flex items-center"><input type="checkbox" name="subjects" value="หลักการประกาศเบื้องต้น" class="mr-2"> 6. หลักการประกาศเบื้องต้น</label>
-                        <label class="flex items-center"><input type="checkbox" name="subjects" value="ทักษะการใช้ชีวิต" class="mr-2"> 7. ทักษะการใช้ชีวิต</label>
-                        <label class="flex items-center"><input type="checkbox" name="subjects" value="เข้าใจการอภิบาลเบื้องต้น" class="mr-2"> 8. เข้าใจการอภิบาลเบื้องต้น</label>
-                        <label class="flex items-center"><input type="checkbox" name="subjects" value="เข้าใจงานรับใช้ในคริสตจักร" class="mr-2"> 9. เข้าใจงานรับใช้ในคริสตจักร</label>
+                        <p class="text-sm text-gray-500 mb-2 font-bold">เลือกวิชาที่ต้องการเรียน:</p>
+                        <label class="flex items-center cursor-pointer hover:bg-gray-100 p-1 rounded"><input type="checkbox" name="subjects" value="รากฐานความเชื่อคริสเตียน" class="mr-2 text-[#C5A66B] rounded"> 1. รากฐานความเชื่อคริสเตียน</label>
+                        <label class="flex items-center cursor-pointer hover:bg-gray-100 p-1 rounded"><input type="checkbox" name="subjects" value="การศึกษาพระคัมภีร์เบื้องต้น" class="mr-2 text-[#C5A66B] rounded"> 2. การศึกษาพระคัมภีร์เบื้องต้น</label>
+                        <label class="flex items-center cursor-pointer hover:bg-gray-100 p-1 rounded"><input type="checkbox" name="subjects" value="เข้าใจการนมัสการ" class="mr-2 text-[#C5A66B] rounded"> 3. เข้าใจการนมัสการ</label>
+                        <label class="flex items-center cursor-pointer hover:bg-gray-100 p-1 rounded"><input type="checkbox" name="subjects" value="วิถีชีวิตคริสเตียน" class="mr-2 text-[#C5A66B] rounded"> 4. วิถีชีวิตคริสเตียน</label>
+                        <label class="flex items-center cursor-pointer hover:bg-gray-100 p-1 rounded"><input type="checkbox" name="subjects" value="เข้าใจความสัมพันธ์กับพระเจ้า" class="mr-2 text-[#C5A66B] rounded"> 5. เข้าใจความสัมพันธ์กับพระเจ้า</label>
+                        <label class="flex items-center cursor-pointer hover:bg-gray-100 p-1 rounded"><input type="checkbox" name="subjects" value="หลักการประกาศเบื้องต้น" class="mr-2 text-[#C5A66B] rounded"> 6. หลักการประกาศเบื้องต้น</label>
+                        <label class="flex items-center cursor-pointer hover:bg-gray-100 p-1 rounded"><input type="checkbox" name="subjects" value="ทักษะการใช้ชีวิต" class="mr-2 text-[#C5A66B] rounded"> 7. ทักษะการใช้ชีวิต</label>
+                        <label class="flex items-center cursor-pointer hover:bg-gray-100 p-1 rounded"><input type="checkbox" name="subjects" value="เข้าใจการอภิบาลเบื้องต้น" class="mr-2 text-[#C5A66B] rounded"> 8. เข้าใจการอภิบาลเบื้องต้น</label>
+                        <label class="flex items-center cursor-pointer hover:bg-gray-100 p-1 rounded"><input type="checkbox" name="subjects" value="เข้าใจงานรับใช้ในคริสตจักร" class="mr-2 text-[#C5A66B] rounded"> 9. เข้าใจงานรับใช้ในคริสตจักร</label>
                     </div>
                 </div>
 
                 <div class="space-y-4">
                     <h3 class="text-lg font-semibold text-gray-700 border-b pb-2">3. ชำระค่าลงทะเบียน</h3>
-                    <div class="bg-[#FDF6E9] p-4 rounded-lg border border-[#E8DCC3] text-center">
+                    <div class="bg-[#FDF6E9] p-5 rounded-lg border border-[#E8DCC3] text-center shadow-sm">
                         <p class="font-bold text-lg text-[#8B6E3D]">บัญชีฝ่ายการศึกษา ธนาคารไทยพาณิชย์</p>
-                        <p class="text-3xl font-bold my-2 select-all">428-177789-8</p>
-                        <button type="button" onclick="copyAccount()" class="text-xs bg-white border border-[#C5A66B] text-[#C5A66B] px-3 py-1 rounded">กดคัดลอกเลขบัญชี</button>
+                        
+                        <div class="my-3">
+                            <p class="text-4xl font-bold select-all text-gray-800 tracking-wider">428-177789-8</p>
+                        </div>
+
+                        <div class="text-sm text-gray-600 bg-white/50 p-2 rounded inline-block">
+                            <span class="font-bold">ชื่อบัญชี:</span><br>
+                            กาญจนา นาทศิโรรัตน์<br>
+                            สุธาทิพย์ โพธิ์ศรีทอง<br>
+                            อัญชลี เปี่ยมสุข
+                        </div>
+                        
+                        <div class="mt-4">
+                            <button type="button" onclick="copyAccount()" class="text-xs bg-white border border-[#C5A66B] text-[#C5A66B] px-4 py-2 rounded-full hover:bg-[#C5A66B] hover:text-white transition flex items-center gap-1 mx-auto">
+                                📋 กดคัดลอกเลขบัญชี
+                            </button>
+                        </div>
                     </div>
-                    <div><label class="block text-sm font-medium text-gray-700">อัปโหลดสลิปโอนเงิน</label><input type="file" id="slipFile" accept="image/*" required class="mt-1 block w-full text-sm text-gray-500 file:bg-[#C5A66B] file:text-white file:border-0 file:px-4 file:py-2 file:rounded-full"/></div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">อัปโหลดสลิปโอนเงิน <span class="text-red-500">*</span></label>
+                        <input type="file" id="slipFile" accept="image/*" required class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#C5A66B] file:text-white hover:file:bg-[#A68A55] cursor-pointer bg-gray-50 rounded-full border border-gray-200"/>
+                    </div>
                 </div>
 
-                <button type="submit" id="submitBtn" class="w-full bg-gray-800 text-white py-3 rounded-lg font-bold shadow-lg hover:bg-gray-900 transition">ยืนยันการสมัครเรียน</button>
+                <button type="submit" id="submitBtn" class="w-full bg-gray-800 text-white py-4 rounded-lg font-bold text-lg shadow-lg hover:bg-gray-900 transition flex justify-center items-center transform active:scale-95">
+                    ยืนยันการสมัครเรียน
+                </button>
             </form>
         </div>
     </div>
 
     <script>
-        // ******************************************************
-        // 🔴 แก้ URL ตรงนี้ให้เป็นอันใหม่ที่ได้มานะครับ 🔴
+        // ******************************************************************
+        // 🔴🔴 สำคัญมาก: เปลี่ยน URL ตรงนี้เป็น URL ล่าสุดที่คุณ Deploy นะครับ 🔴🔴
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx2PV3P8zDm3-9RsdkY56HMlDmpGprQZ53EBCqHchskUzALNd7QqU1n51XFFOQvER1j/exec"; 
-        // ******************************************************
+        // ******************************************************************
 
         function toggleSubjects(show) {
             const list = document.getElementById('subjectList');
-            list.classList.toggle('hidden', !show);
+            if(show) list.classList.remove('hidden');
+            else list.classList.add('hidden');
         }
 
         function copyAccount() {
             navigator.clipboard.writeText("428-177789-8");
-            Swal.fire({ icon: 'success', title: 'คัดลอกแล้ว', timer: 1000, showConfirmButton: false });
+            Swal.fire({ 
+                icon: 'success', 
+                title: 'คัดลอกเลขบัญชีแล้ว', 
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 2000 
+            });
         }
 
-        document.getElementById('regisForm').addEventListener('submit', function(e) {
+        document.getElementById('regisForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
-            btn.innerHTML = 'กำลังส่งข้อมูล... (รอสักครู่)';
-            btn.disabled = true;
-
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData);
+            const originalText = btn.innerHTML;
             
-            // จัดการวิชา
-            const checkboxes = document.querySelectorAll('input[name="subjects"]:checked');
-            let subjects = [];
-            if(data.studyType === 'full') subjects = ["เรียนทั้งหลักสูตร"];
-            else checkboxes.forEach((cb) => subjects.push(cb.value));
-            data.subjects = subjects;
+            // เปลี่ยนปุ่มเป็นสถานะกำลังโหลด
+            btn.innerHTML = `
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                กำลังส่งข้อมูล...
+            `;
+            btn.disabled = true;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
 
-            // จัดการรูปภาพ
-            const fileInput = document.getElementById('slipFile');
-            if (fileInput.files.length > 0) {
-                const reader = new FileReader();
-                reader.readAsDataURL(fileInput.files[0]);
-                reader.onload = function () {
-                    data.slipImage = reader.result;
-                    sendData(data);
-                };
-            } else {
-                sendData(data);
+            try {
+                // 1. รวบรวมข้อมูลจาก Form
+                const formData = new FormData(this);
+                const data = Object.fromEntries(formData);
+                
+                // 2. จัดการ Checkbox รายวิชา
+                const checkboxes = document.querySelectorAll('input[name="subjects"]:checked');
+                let subjects = [];
+                if(data.studyType === 'full') {
+                    subjects = ["เรียนทั้งหลักสูตร (ทุกวิชา)"];
+                } else {
+                    checkboxes.forEach((cb) => subjects.push(cb.value));
+                    // ถ้าเลือกเรียนรายวิชา แต่ไม่ติ๊กวิชาเลย ให้แจ้งเตือน
+                    if(subjects.length === 0) {
+                        throw new Error("กรุณาเลือกวิชาที่ต้องการเรียนอย่างน้อย 1 วิชา");
+                    }
+                }
+                data.subjects = subjects;
+
+                // 3. แปลงไฟล์รูปภาพเป็น Base64
+                const fileInput = document.getElementById('slipFile');
+                if (fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    // เช็คขนาดไฟล์ (ไม่เกิน 5MB)
+                    if(file.size > 5 * 1024 * 1024) {
+                        throw new Error("ไฟล์รูปขนาดใหญ่เกินไป (ต้องไม่เกิน 5MB)");
+                    }
+
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = function () {
+                        data.slipImage = reader.result; // ได้ String ยาวๆ
+                        sendData(data, btn, originalText);
+                    };
+                    reader.onerror = function (error) {
+                        throw new Error("อ่านไฟล์รูปภาพไม่สำเร็จ");
+                    };
+                } else {
+                    // กรณีไม่มีรูป (ปกติ required ไว้แล้ว แต่อาจหลุดมา)
+                    sendData(data, btn, originalText);
+                }
+
+            } catch (error) {
+                showError(error.message);
+                resetButton(btn, originalText);
             }
         });
 
-        function sendData(data) {
-            // ใช้ text/plain เพื่อป้องกัน Browser บล็อก (CORS)
+        function sendData(data, btn, originalText) {
+            // เช็คว่า URL ถูกใส่หรือยัง
+            if(WEB_APP_URL.includes("วาง_URL")) {
+                showError("กรุณาใส่ Web App URL ในโค้ดไฟล์ index.html ก่อนครับ");
+                resetButton(btn, originalText);
+                return;
+            }
+
+            // ส่งข้อมูลด้วย fetch
             fetch(WEB_APP_URL, {
                 method: 'POST',
-                redirect: "follow",
+                // สำคัญ: ใช้ text/plain เพื่อหลบ CORS Policy
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify(data)
             })
             .then(res => res.json())
             .then(response => {
                 if(response.result === 'success') {
-                    Swal.fire('สำเร็จ!', 'สมัครเรียนเรียบร้อยแล้ว', 'success').then(() => window.location.reload());
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'สมัครเรียนเรียบร้อย!',
+                        text: 'ระบบได้รับข้อมูลแล้ว ขอพระเจ้าอวยพรครับ',
+                        confirmButtonText: 'ตกลง',
+                        confirmButtonColor: '#C5A66B'
+                    }).then(() => {
+                        window.location.reload();
+                    });
                 } else {
-                    throw new Error(response.error || response.message);
+                    throw new Error(response.error || response.message || "เกิดข้อผิดพลาดจากฝั่ง Server");
                 }
             })
             .catch(error => {
-                Swal.fire('เกิดข้อผิดพลาด', error.message || 'เชื่อมต่อระบบไม่ได้', 'error');
-                const btn = document.getElementById('submitBtn');
-                btn.disabled = false;
-                btn.innerHTML = 'ยืนยันการสมัครเรียน';
+                console.error(error);
+                showError("ส่งข้อมูลไม่สำเร็จ: " + error.message);
+                resetButton(btn, originalText);
             });
+        }
+
+        function showError(msg) {
+            Swal.fire({
+                icon: 'error',
+                title: 'เกิดข้อผิดพลาด',
+                text: msg,
+                confirmButtonColor: '#374151'
+            });
+        }
+
+        function resetButton(btn, originalText) {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+            btn.classList.remove('opacity-75', 'cursor-not-allowed');
         }
     </script>
 </body>
