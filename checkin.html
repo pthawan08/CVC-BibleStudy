@@ -5,22 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>เช็คชื่อเข้าเรียน</title>
     <link rel="icon" type="image/png" href="logo.png">
+    
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <style> body { font-family: 'Sarabun', sans-serif; } </style>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <style> 
+        body { font-family: 'Sarabun', sans-serif; } 
+        /* ปรับแต่งช่องค้นหาให้สวยงามเข้ากับ Theme */
+        .select2-container .select2-selection--single {
+            height: 45px;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            top: 10px;
+        }
+    </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
 
     <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full border-t-4 border-[#C5A66B]">
         <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">เช็คชื่อเข้าเรียน 📝</h1>
 
-        <form id="checkinForm" class="space-y-4">
+        <form id="checkinForm" class="space-y-5">
             
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">1. ชื่อของคุณ</label>
-                <select id="studentName" required onchange="updateSubjectList()" class="w-full p-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-[#C5A66B]">
-                    <option value="">-- กำลังโหลดรายชื่อ... --</option>
+                <label class="block text-sm font-bold text-gray-700 mb-1">1. ค้นหาชื่อของคุณ</label>
+                <select id="studentName" class="w-full select2">
+                    <option value="">-- พิมพ์ชื่อเพื่อค้นหา --</option>
                 </select>
             </div>
 
@@ -47,7 +67,7 @@
                 </select>
             </div>
 
-            <button type="submit" id="submitBtn" class="w-full bg-[#C5A66B] hover:bg-[#A68A55] text-white font-bold py-3 rounded-lg shadow mt-2">
+            <button type="submit" id="submitBtn" class="w-full bg-[#C5A66B] hover:bg-[#A68A55] text-white font-bold py-3 rounded-lg shadow mt-2 transition">
                 บันทึกการเข้าเรียน
             </button>
 
@@ -56,37 +76,52 @@
     </div>
 
     <script>
-        // ********************************************
-        // 🔴 ใส่ URL ของคุณที่นี่ 🔴
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwyWkLuZJFukEylu3GVa6PB_yYlllyEdpuJjGRNqIuD_9M0lBYX19RmOxI0trzdUVYN/exec"; 
-        // ********************************************
+        // 🔴🔴 ใส่ URL ของคุณตรงนี้ 🔴🔴
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwz30fY1W0sThNLEIlfej1utuq8VU1-q0vSai8quVFtz4ZXzBfmeERGibyJXkzq554/exec"; 
 
-        let studentDataMap = {}; // เก็บข้อมูล ชื่อ -> รายวิชา
+        let studentDataMap = {}; 
 
-        // โหลดข้อมูล
-        fetch(WEB_APP_URL)
-        .then(res => res.json())
-        .then(data => {
-            const select = document.getElementById('studentName');
-            select.innerHTML = '<option value="">-- เลือกชื่อของคุณ --</option>';
-            
-            // data คือ array ของ [ชื่อ, วิชา1,วิชา2...]
-            data.forEach(row => {
-                const name = row[0];
-                const subjects = row[1]; // String ที่คั่นด้วย comma
-                studentDataMap[name] = subjects;
-
-                const option = document.createElement('option');
-                option.value = name;
-                option.text = name;
-                select.appendChild(option);
+        // เริ่มทำงานเมื่อเปิดเว็บ
+        $(document).ready(function() {
+            // ตั้งค่า Select2 ให้กับช่องเลือกชื่อ
+            $('#studentName').select2({
+                placeholder: "พิมพ์ชื่อ หรือ นามสกุล...",
+                allowClear: true,
+                width: '100%'
             });
-        })
-        .catch(err => console.error(err));
 
-        // อัปเดตวิชาเมื่อเลือกชื่อ
-        function updateSubjectList() {
-            const name = document.getElementById('studentName').value;
+            // ดึงข้อมูลจาก Server
+            fetch(WEB_APP_URL)
+            .then(res => res.json())
+            .then(data => {
+                const select = $('#studentName'); // ใช้ jQuery เลือก element
+                select.empty(); // ล้างข้อมูลเก่า
+                select.append('<option value="">-- พิมพ์ชื่อเพื่อค้นหา --</option>');
+                
+                // วนลูปสร้างตัวเลือก
+                data.forEach(row => {
+                    const name = row[0];
+                    const subjects = row[1];
+                    studentDataMap[name] = subjects;
+                    
+                    // เพิ่มตัวเลือกลงใน Dropdown
+                    const newOption = new Option(name, name, false, false);
+                    select.append(newOption);
+                });
+                
+                // บอก Select2 ว่าข้อมูลเปลี่ยนแล้ว
+                select.trigger('change');
+            });
+
+            // เมื่อมีการเลือกชื่อ (Event ของ Select2)
+            $('#studentName').on('select2:select', function (e) {
+                const name = e.params.data.id;
+                updateSubjectList(name);
+            });
+        });
+
+        // ฟังก์ชันอัปเดตวิชา
+        function updateSubjectList(name) {
             const subjectSelect = document.getElementById('subjectSelect');
             subjectSelect.innerHTML = '<option value="">-- เลือกวิชา --</option>';
 
@@ -101,13 +136,20 @@
             }
         }
 
-        // กดส่ง
+        // กดส่งข้อมูล
         document.getElementById('checkinForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            const name = document.getElementById('studentName').value;
+            
+            // ดึงค่าจาก Select2 ต้องใช้ jQuery .val()
+            const name = $('#studentName').val(); 
             const subject = document.getElementById('subjectSelect').value;
             const week = document.getElementById('weekNumber').value;
+            const btn = document.getElementById('submitBtn');
+
+            if(!name) {
+                Swal.fire('ลืมอะไรไปหรือเปล่า?', 'กรุณาค้นหาและเลือกชื่อก่อนครับ', 'warning');
+                return;
+            }
 
             btn.disabled = true;
             btn.innerHTML = 'กำลังบันทึก...';
@@ -120,7 +162,7 @@
             .then(res => res.json())
             .then(data => {
                 if(data.result === 'success') {
-                    Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ', timer: 1500, showConfirmButton: false });
+                    Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ', text: `วิชา: ${subject} (ครั้งที่ ${week})`, timer: 2000, showConfirmButton: false });
                 } else {
                     Swal.fire('Error', data.message, 'error');
                 }
