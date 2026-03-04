@@ -28,7 +28,13 @@
             <form id="regisForm" class="space-y-6">
                 <div class="space-y-4">
                     <h3 class="text-lg font-semibold text-gray-700 border-b pb-2">1. ข้อมูลผู้สมัคร</h3>
+                    
                     <div><label class="block text-sm font-medium text-gray-700">ชื่อ - นามสกุล</label><input type="text" name="name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2 bg-gray-50"></div>
+                    
+                    <div><label class="block text-sm font-medium text-gray-700">เบอร์ติดต่อ</label><input type="tel" name="phone" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2 bg-gray-50" placeholder="เช่น 0812345678"></div>
+                    
+                    <div><label class="block text-sm font-medium text-gray-700">ที่อยู่ในการจัดส่งหนังสือ</label><textarea name="address" required rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2 bg-gray-50" placeholder="บ้านเลขที่ หมู่ ซอย ถนน ตำบล อำเภอ จังหวัด รหัสไปรษณีย์"></textarea></div>
+
                     <div class="grid grid-cols-2 gap-4">
                         <div><label class="block text-sm font-medium text-gray-700">เพศ</label><select name="gender" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2 bg-gray-50"><option>ชาย</option><option>หญิง</option></select></div>
                         <div><label class="block text-sm font-medium text-gray-700">อายุความเชื่อ (ปี)</label><input type="text" name="faithAge" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2 bg-gray-50"></div>
@@ -75,7 +81,6 @@
     </div>
 
     <script>
-        // 🔴🔴 ใส่ URL ของคุณตรงนี้ 🔴🔴
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwz30fY1W0sThNLEIlfej1utuq8VU1-q0vSai8quVFtz4ZXzBfmeERGibyJXkzq554/exec"; 
 
         function toggleSubjects(show) {
@@ -98,7 +103,6 @@
                 const formData = new FormData(this);
                 const data = Object.fromEntries(formData);
                 
-                // จัดการวิชา (แก้ปัญหาเรียนทั้งหลักสูตร)
                 let subjects = [];
                 if(data.studyType === 'full') {
                     subjects = [
@@ -112,7 +116,6 @@
                 }
                 data.subjects = subjects;
 
-                // จัดการรูปภาพ
                 const fileInput = document.getElementById('slipFile');
                 if (fileInput.files.length > 0) {
                     const reader = new FileReader();
