@@ -54,11 +54,11 @@
                         <label class="flex items-center"><input type="checkbox" name="subjects" value="รากฐานความเชื่อคริสเตียน" class="mr-2"> 1. รากฐานความเชื่อคริสเตียน</label>
                         <label class="flex items-center"><input type="checkbox" name="subjects" value="การศึกษาพระคัมภีร์เบื้องต้น" class="mr-2"> 2. การศึกษาพระคัมภีร์เบื้องต้น</label>
                         <label class="flex items-center"><input type="checkbox" name="subjects" value="เข้าใจการนมัสการ" class="mr-2"> 3. เข้าใจการนมัสการ</label>
-                        <label class="flex items-center"><input type="checkbox" name="subjects" value="วิถีชีวิตคริสเตียน" class="mr-2"> 4. วิถีชีวิตคริสเตียน</label>
-                        <label class="flex items-center"><input type="checkbox" name="subjects" value="เข้าใจความสัมพันธ์กับพระเจ้า" class="mr-2"> 5. เข้าใจความสัมพันธ์กับพระเจ้า</label>
-                        <label class="flex items-center"><input type="checkbox" name="subjects" value="หลักการประกาศเบื้องต้น" class="mr-2"> 6. หลักการประกาศเบื้องต้น</label>
+                        <label class="flex items-center"><input type="checkbox" name="subjects" value="ชีวิตแบบผู้ชนะ " class="mr-2"> 4. ชีวิตแบบผู้ชนะ </label>
+                        <label class="flex items-center"><input type="checkbox" name="subjects" value="วิถีชีวิตคริสเตียน" class="mr-2"> 5. วิถีชีวิตคริสเตียน</label>
+                        <label class="flex items-center"><input type="checkbox" name="subjects" value="การอธิษฐานและฟังเสียงพระเจ้า" class="mr-2"> 6. การอธิษฐานและฟังเสียงพระเจ้า</label>
                         <label class="flex items-center"><input type="checkbox" name="subjects" value="ทักษะการใช้ชีวิต" class="mr-2"> 7. ทักษะการใช้ชีวิต</label>
-                        <label class="flex items-center"><input type="checkbox" name="subjects" value="เข้าใจการอภิบาลเบื้องต้น" class="mr-2"> 8. เข้าใจการอภิบาลเบื้องต้น</label>
+                        <label class="flex items-center"><input type="checkbox" name="subjects" value="หลักการประกาศเบื้องต้น" class="mr-2"> 8. หลักการประกาศเบื้องต้น</label>
                         <label class="flex items-center"><input type="checkbox" name="subjects" value="เข้าใจงานรับใช้ในคริสตจักร" class="mr-2"> 9. เข้าใจงานรับใช้ในคริสตจักร</label>
                     </div>
                 </div>
@@ -108,8 +108,8 @@
                 if(data.studyType === 'full') {
                     subjects = [
                         "รากฐานความเชื่อคริสเตียน", "การศึกษาพระคัมภีร์เบื้องต้น", "เข้าใจการนมัสการ",
-                        "วิถีชีวิตคริสเตียน", "เข้าใจความสัมพันธ์กับพระเจ้า", "หลักการประกาศเบื้องต้น",
-                        "ทักษะการใช้ชีวิต", "เข้าใจการอภิบาลเบื้องต้น", "เข้าใจงานรับใช้ในคริสตจักร"
+                        "ชีวิตแบบผู้ชนะ", "วิถีชีวิตคริสเตียน", "การอธิษฐานและฟังเสียงพระเจ้า",
+                        "ทักษะการใช้ชีวิต", "หลักการประกาศเบื้องต้น", "เข้าใจงานรับใช้ในคริสตจักร"
                     ];
                 } else {
                     document.querySelectorAll('input[name="subjects"]:checked').forEach((cb) => subjects.push(cb.value));
